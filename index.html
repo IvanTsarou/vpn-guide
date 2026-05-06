@@ -26,6 +26,12 @@
   .step-text { flex: 1; }
   .link-box { background: #ebf8ff; border: 1px solid #90cdf4; border-radius: 8px; padding: 12px 16px; margin: 14px 0; word-break: break-all; font-family: monospace; font-size: 0.85em; color: #1a365d; }
   .link-box a { color: #2b6cb0; }
+  .copy-row { display: flex; gap: 10px; align-items: center; margin-top: 8px; }
+  .copy-link { flex: 1; cursor: pointer; user-select: all; }
+  .copy-btn { background: #2b6cb0; color: white; border: 0; border-radius: 8px; padding: 6px 10px; font-size: 0.85em; font-family: inherit; cursor: pointer; white-space: nowrap; }
+  .copy-btn:hover { background: #2c5282; }
+  .copy-btn:active { transform: translateY(1px); }
+  .copy-btn[disabled] { opacity: 0.65; cursor: default; transform: none; }
   .key-box { background: #f0fff4; border: 1px solid #9ae6b4; border-radius: 8px; padding: 12px 16px; margin: 14px 0; word-break: break-all; font-family: monospace; font-size: 0.78em; color: #1a365d; }
   .qr-box { text-align: center; margin: 20px 0; }
   .qr-box img { max-width: 200px; border: 3px solid #2b6cb0; border-radius: 12px; padding: 8px; background: white; }
@@ -216,7 +222,10 @@
   <div class="note">💻 На компьютере QR обычно не сканируется — добавляйте профиль по ссылке (вручную) или через буфер обмена:</div>
   <div class="link-box">
     🔗 URL подписки (VLESS+Reality):<br>
-    <a href="https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u">https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u</a>
+    <div class="copy-row">
+      <a class="copy-link" data-copy href="https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u">https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u</a>
+      <button class="copy-btn" type="button" data-copy-btn="Копировать">Копировать</button>
+    </div>
   </div>
 
   <div class="qr-box">
@@ -281,7 +290,10 @@
 
   <div class="link-box">
     🔗 URL подписки (VLESS+Reality):<br>
-    <a href="https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u">https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u</a>
+    <div class="copy-row">
+      <a class="copy-link" data-copy href="https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u">https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u</a>
+      <button class="copy-btn" type="button" data-copy-btn="Копировать">Копировать</button>
+    </div>
   </div>
 
   <div class="step"><div class="step-num">4</div><div class="step-text">Откройте Hiddify → нажмите <strong>«+»</strong> (Добавить)</div></div>
@@ -303,7 +315,10 @@
 
   <div class="link-box">
     🔗 URL подписки (VLESS+Reality):<br>
-    <a href="https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u">https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u</a>
+    <div class="copy-row">
+      <a class="copy-link" data-copy href="https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u">https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u</a>
+      <button class="copy-btn" type="button" data-copy-btn="Копировать">Копировать</button>
+    </div>
   </div>
 
   <div class="step"><div class="step-num">4</div><div class="step-text">Откройте Hiddify → нажмите <strong>«+»</strong> (Добавить)</div></div>
@@ -323,7 +338,10 @@
 
   <div class="link-box">
     🔗 URL подписки (VLESS+Reality):<br>
-    <a href="https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u">https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u</a>
+    <div class="copy-row">
+      <a class="copy-link" data-copy href="https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u">https://204.168.175.230:2096/sub/7fiw7aukux4kvu9u</a>
+      <button class="copy-btn" type="button" data-copy-btn="Копировать">Копировать</button>
+    </div>
   </div>
 
   <div class="step"><div class="step-num">4</div><div class="step-text">Запустите Hiddify → нажмите <strong>«+»</strong> → выберите <strong>«Вручную»</strong> и вставьте URL</div></div>
@@ -387,6 +405,58 @@
 <div style="background: #1a365d; color: white; text-align: center; padding: 20px; margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
   Сервер: Hetzner Finland · Протоколы: MTProto, AmneziaWG, VLESS+Reality
 </div>
+
+<script>
+  async function copyText(text) {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    ta.style.left = '-1000px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+
+  function setCopiedState(btn) {
+    if (!btn) return;
+    const original = btn.getAttribute('data-copy-btn') || btn.textContent || 'Копировать';
+    btn.textContent = 'Скопировано';
+    btn.disabled = true;
+    window.setTimeout(() => {
+      btn.textContent = original;
+      btn.disabled = false;
+    }, 900);
+  }
+
+  document.addEventListener('click', async (e) => {
+    const link = e.target.closest('a[data-copy]');
+    const btn = e.target.closest('button[data-copy-btn]');
+
+    if (!link && !btn) return;
+
+    const row = (link || btn).closest('.copy-row');
+    const a = row?.querySelector('a[data-copy]');
+    if (!a) return;
+
+    e.preventDefault();
+
+    try {
+      await copyText(a.href);
+      setCopiedState(btn || row.querySelector('button[data-copy-btn]'));
+    } catch (err) {
+      // If copy is blocked, let normal navigation happen on link click.
+      if (link) window.location.href = link.href;
+    }
+  });
+</script>
 
 </body>
 </html>
